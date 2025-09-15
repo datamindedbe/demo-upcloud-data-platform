@@ -28,16 +28,30 @@ The platform team can deploy the infrastructure in this repository using [OpenTo
 ## Tools needed
 
 * [OpenTofu](https://opentofu.org/)
-* [Upcloud console](https://hub.upcloud.com)
 * [Kubectl](https://kubernetes.io/docs/reference/kubectl/)
 * [Helm](https://helm.sh/)
 
 ## Prerequisites
 
-* create an Upcloud account and verify it, which requires adding a credit card. This ensures that you can provision the resources needed for this project.
-* make sure you have a hostname for the data platform, many of the provisioned services require SSL, which requires a valid hostname. 
-  You can use your favorite DNS provider to use a subdomain of a domain that you own.
+* Create an [Upcloud account](https://hub.upcloud.com) and verify it, which requires adding a credit card. This ensures that you can provision the resources needed for this project.
+* Create a subaccount in Upcloud, this is the account that will be used by terraform to create all resources. 
+  It will have access to the API and you will need to give it permissions to create the resources needed for this project.
+  For more information, see [Upcloud documentation](https://upcloud.com/docs/guides/getting-started-upcloud-api/).
+* make sure you have a hosted domain for the data platform services. Many of the provisioned services require SSL, which requires a valid hostname. 
+  You can use your favorite DNS provider and use a subdomain of a domain that you own.
 
 ## Infra deployment
 
-TODO
+- If you already have a storage bucket for the terraform state, you can skip this step. If not, go to `infra/bootstrap`, make sure to expose UPCLOUD_USERNAME, UPCLOUD_PASSWORD as environment variables and run `tofu init` and `tofu apply`.
+- Go to the `infra/upcloud` folder and create a `terraform.tfvars` file using the `terraform.tfvars.example`. You can also check the default values in `variables.tf` and update them if needed.
+  - The `storage_bucket_domain_name` and `storage_bucket_name` can be found in the output of the bootstrap step.
+  - Make sure you configure your AWS s3 credentials for the `upcloud` profile (we use the AWS profile `upcloud` in `infra/foundation/state.tf`).
+  Add the necessary configuration to the `.aws/config` and `.aws/credentials` file. For full details, look at the [Upcloud object storage overview](https://hub.upcloud.com/object-storage/2.0) in your object storage for S3 programmatic access.
+- Run `tofu init -var-file=terraform.tfvars` in the `infra/foundation` folder to initialize the terraform backend.
+- Run `tofu apply -var-file=terraform.tfvars -target=upcloud_kubernetes_cluster.this -target=upcloud_kubernetes_node_group.default_group -target=upcloud_managed_database_postgresql.db` in the `infra/foundation` to create the kubernetes cluster that you need. This will take a while (10-15 minutes).
+- Test the access to the kubernetes cluster:
+  - run `export KUBECONFIG=$(pwd)/.kubeconfig.yml` from the `infra/foundation` folder
+  - run `kubectl get nodes` to see if you can access the cluster
+- Run `tofu apply -var-file=terraform.tfvars -target=module.traefik` in the `infra/foundation` to create the application proxy and load balancer for kubernetes.
+  While this is running, check the upcloud console for the public IP address assigned to the load balancer. This IP address needs to be added as an A record in your DNS provider for the domain name you configured.
+- 

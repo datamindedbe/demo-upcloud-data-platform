@@ -1,22 +1,15 @@
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
+    upcloud = {
+      source  = "upcloudltd/upcloud"
+      version = "5.25.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.3"
     }
   }
 }
 
-# terraform {
-#   required_providers {
-#     upcloud = {
-#       source  = "UpCloudLtd/upcloud"
-#       version = "5.22.1"
-#     }
-#   }
-# }
-
-# provider "upcloud" {
-#   username = var.upcloud_username
-#   password = var.upcloud_password
-# }
+provider "upcloud" {
+} # We do not set the UPCLOUD_USERNAME and UPCLOUD_PASSWORD explicitly here, but rather look for them in your environment variables.
