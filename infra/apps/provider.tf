@@ -1,6 +1,6 @@
 provider "zitadel" {
   domain           = "zitadel.${var.hosted_domain}"
-  jwt_profile_json = file("${path.module}/token.json")
+  jwt_profile_file = "token.json"
 }
 
 terraform {

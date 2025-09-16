@@ -1,4 +1,4 @@
-# Troubleshooting zitadel settings
+# Troubleshooting zitadel configuration
 
 If you encounter issues connecting to Zitadel using the cli/terraform.
 The following steps can be useful:

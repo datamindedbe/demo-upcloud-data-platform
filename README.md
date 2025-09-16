@@ -42,16 +42,25 @@ The platform team can deploy the infrastructure in this repository using [OpenTo
 
 ## Infra deployment
 
-- If you already have a storage bucket for the terraform state, you can skip this step. If not, go to `infra/bootstrap`, make sure to expose UPCLOUD_USERNAME, UPCLOUD_PASSWORD as environment variables and run `tofu init` and `tofu apply`.
-- Go to the `infra/upcloud` folder and create a `terraform.tfvars` file using the `terraform.tfvars.example`. You can also check the default values in `variables.tf` and update them if needed.
+1. If you already have a storage bucket for the terraform state, you can skip this step. If not, go to `infra/bootstrap`, make sure to expose UPCLOUD_USERNAME, UPCLOUD_PASSWORD as environment variables and run `tofu init` and `tofu apply`.
+2. Go to the `infra/upcloud` folder and create a `terraform.tfvars` file using the `terraform.tfvars.example`. You can also check the default values in `variables.tf` and update them if needed.
   - The `storage_bucket_domain_name` and `storage_bucket_name` can be found in the output of the bootstrap step.
   - Make sure you configure your AWS s3 credentials for the `upcloud` profile (we use the AWS profile `upcloud` in `infra/foundation/state.tf`).
   Add the necessary configuration to the `.aws/config` and `.aws/credentials` file. For full details, look at the [Upcloud object storage overview](https://hub.upcloud.com/object-storage/2.0) in your object storage for S3 programmatic access.
-- Run `tofu init -var-file=terraform.tfvars` in the `infra/foundation` folder to initialize the terraform backend.
-- Run `tofu apply -var-file=terraform.tfvars -target=upcloud_kubernetes_cluster.this -target=upcloud_kubernetes_node_group.default_group -target=upcloud_managed_database_postgresql.db` in the `infra/foundation` to create the kubernetes cluster that you need. This will take a while (10-15 minutes).
-- Test the access to the kubernetes cluster:
+3. Run `tofu init -var-file=terraform.tfvars` in the `infra/foundation` folder to initialize the terraform backend.
+4. Run `tofu apply -var-file=terraform.tfvars -target=upcloud_kubernetes_cluster.this -target=upcloud_kubernetes_node_group.default_group -target=upcloud_managed_database_postgresql.db` in the `infra/foundation` to create the kubernetes cluster that you need. This will take a while (10-15 minutes).
+5. Test the access to the kubernetes cluster:
   - run `export KUBECONFIG=$(pwd)/.kubeconfig.yml` from the `infra/foundation` folder
   - run `kubectl get nodes` to see if you can access the cluster
-- Run `tofu apply -var-file=terraform.tfvars -target=module.traefik` in the `infra/foundation` to create the application proxy and load balancer for kubernetes.
+6.  Run `tofu apply -var-file=terraform.tfvars -target=module.traefik` in the `infra/foundation` to create the application proxy and load balancer for kubernetes.
   While this is running, check the upcloud console for the public IP address assigned to the load balancer. This IP address needs to be added as an A record in your DNS provider for the domain name you configured.
-- 
+7. Run `tofu apply -var-file=terraform.tfvars` in the `infra/foundation` to create the rest of the resources.
+
+If all went well, you should now have access to Zitadel, go to `https://zitadel.<your-domain>` to login. The initial credentials can be found in `modules/zitadel/main.tf`. 
+- Go to the service users tab and create a new service user. ![Create service user](docs/CreateZitadelServiceUser.png)
+- Make sure to assign the service user to the `Org owner` and the `Iam owner` roles.
+- Create a key for the service user. Zitadel will create the json key that you need for the Terraform provider. ![Create Key Service user](docs/CreateKeyForZitadelServiceUser.png)
+- Put the key in the `infra/apps` directory as `token.json`
+
+8. Create the `terraform.tfvars` using the provided template, the organization ID can be retrieved from the Zitadel UI.
+9. run `tofu apply -var-file=terraform.tfvars` in the `infra/apps` directory to create the remaining services.
