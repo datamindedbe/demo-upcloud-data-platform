@@ -11,7 +11,7 @@ resource "helm_release" "traefik" {
   repository = "https://helm.traefik.io/traefik"
   version = "v35.1.0"
   name  = "traefik"
-  namespace = "services"
+  namespace = "traefik"
   values = [
 <<EOF
 # Enable dashboard access (consider security implications for production)
@@ -25,6 +25,53 @@ ingressRoute:
     matchRule: Host(`traefik.${var.domain}`)
   tls:
     certResolver: letsencrypt
+
+service:
+  enabled: true
+  type: LoadBalancer
+
+  annotations:
+    # TODO: check that when recreating the service, the backend members are filled in automatically now that we use the name of the nodePorts.
+    service.beta.kubernetes.io/upcloud-load-balancer-config: |
+      {
+        "plan": "development",
+        "frontends": [
+            {
+              "name": "http",
+              "mode": "tcp",
+              "default_backend": "web",
+              "port" : 80,
+              "networks": [
+                {
+                  "name": "private-IPv4"
+                }]
+              },
+            {
+              "name": "https",
+              "mode": "tcp",
+              "port" : 443,
+              "default_backend": "websecure",
+              "networks": [
+              {
+                "name": "private-IPv4"
+              }]
+            }
+        ],
+        "backends": [
+          {
+            "name": "websecure",
+            "properties": {
+              "timeout_server": 60
+            }
+          },
+          {
+            "name": "web",
+            "properties": {
+              "timeout_server": 60
+            }
+          }
+        ]
+      }
 
 # Enable Kubernetes providers
 providers:
@@ -75,7 +122,7 @@ certificatesResolvers:
       # ACME CA server to use
       caServer: https://acme-v02.api.letsencrypt.org/directory
       # Email address used for registration
-      email: "${var.admin_email}"
+      email: "niels.claeys@dataminded.com"
       # File or key used for certificates storage
       storage: /data/acme.json
       # HTTP challenge
@@ -103,7 +150,7 @@ fsGroup: 65532
 fsGroupChangePolicy: "OnRootMismatch"
 
 additionalArguments:
-  - "--log.level=INFO"
+  - "--log.level=DEBUG"
 EOF
 ]
   timeout = 900

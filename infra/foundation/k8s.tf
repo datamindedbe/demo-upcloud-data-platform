@@ -44,3 +44,9 @@ resource "kubernetes_namespace" "services" {
     name = "services"
   }
 }
+
+resource "kubernetes_namespace" "traefik" {
+  metadata {
+    name = "traefik"
+  }
+}
