@@ -43,6 +43,9 @@ service:
               "port" : 80,
               "networks": [
                 {
+                  "name": "public-IPv4"
+                },
+                {
                   "name": "private-IPv4"
                 }]
               },
@@ -52,6 +55,9 @@ service:
               "port" : 443,
               "default_backend": "websecure",
               "networks": [
+              {
+                "name": "public-IPv4"
+              },
               {
                 "name": "private-IPv4"
               }]

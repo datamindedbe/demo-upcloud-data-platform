@@ -50,3 +50,9 @@ resource "kubernetes_namespace" "traefik" {
     name = "traefik"
   }
 }
+
+resource "kubernetes_namespace" "opa" {
+  metadata {
+    name = "opa"
+  }
+}

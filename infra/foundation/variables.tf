@@ -49,7 +49,7 @@ variable "db_allow_public_access" {
 }
 
 variable "k8s_default_node_count" {
-  default = 3
+  default = 2
   type = number
   description = "The number of static nodes to create in the kubernetes worker node group."
 }

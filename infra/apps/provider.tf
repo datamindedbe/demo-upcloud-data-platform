@@ -9,9 +9,19 @@ terraform {
       source  = "zitadel/zitadel"
       version = "2.2.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.16.1"
+    }
   }
 }
 
 provider "kubernetes" {
   config_path = "../.kubeconfig.yml"
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "../.kubeconfig.yml"
+  }
 }

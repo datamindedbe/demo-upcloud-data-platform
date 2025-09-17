@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = var.storage_bucket_name
-    key    = "${var.resource_prefix}/terraform.tfstate" #TODO change to dp-stack-foundation.tfstate
+    key    = "${var.resource_prefix}/dp-stack-apps.tfstate"
     region = var.region
 
     # We need to skip AWS specific checks and use path style URLs for

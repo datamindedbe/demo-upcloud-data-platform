@@ -80,3 +80,26 @@ resource "kubernetes_secret" "zitadel_db" {
   }
   type = "Opaque"
 }
+resource "upcloud_managed_database_logical_database" "lakekeeper_db" {
+  service = upcloud_managed_database_postgresql.db.id
+  name    = "lakekeeper"
+}
+
+resource "kubernetes_secret" "lakekeeper_db" {
+  metadata {
+    name = "lakekeeper-custom-secrets"
+    namespace = "services"
+  }
+  data = {
+    ICEBERG_REST__PG_HOST_R=upcloud_managed_database_postgresql.db.service_host
+    ICEBERG_REST__PG_HOST_W=upcloud_managed_database_postgresql.db.service_host
+    ICEBERG_REST__PG_PORT=upcloud_managed_database_postgresql.db.service_port
+    ICEBERG_REST__PG_PASSWORD=upcloud_managed_database_postgresql.db.service_password
+    ICEBERG_REST__PG_DATABASE=upcloud_managed_database_logical_database.lakekeeper_db.name
+    ICEBERG_REST__PG_USER=upcloud_managed_database_postgresql.db.service_username
+    ICEBERG_REST__SECRETS_BACKEND="Postgres"
+    LAKEKEEPER__AUTHZ_BACKEND="allowall"
+  }
+  depends_on = [kubernetes_namespace.services]
+}
+
