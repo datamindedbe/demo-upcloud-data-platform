@@ -83,3 +83,10 @@ STS Enabled: No
 Flavor: s3-compat
 ```
 
+3. Now use a SQL client (e.g. DBeaver) or trino CLI to connect to Trino at `https://trino.<your-domain>`.
+4. Run the following commands to create a new Iceberg table:
+```
+CREATE SCHEMA iceberg.demo;
+CREATE TABLE iceberg.demo.yearly_clicks(year, clicks) as VALUES (2021,10000),(2022,20000)
+SELECT * FROM iceberg.demo.yearly_clicks;
+```
