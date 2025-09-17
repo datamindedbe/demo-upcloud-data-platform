@@ -1,0 +1,4 @@
+storage_bucket_domain_name = "your domain name (ends with upcloudobjects.com)"
+storage_bucket_name = "your storage bucket name"
+host_domain = "your hosted domain name (e.g. demo.yourcompany.com)"
+zitadel_org_id = "your zitadel organization id"
