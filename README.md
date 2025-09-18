@@ -28,7 +28,7 @@ The Data Engineers interact with the platform via the Airflow UI and via a datab
 
 # Deploying the platform
 
-The platform team can deploy the infrastructure in this repository using [OpenTofu](https://opentofu.org/).
+The infrastructure for your data platform can be deployed using [OpenTofu](https://opentofu.org/).
 
 ## Tools needed
 
