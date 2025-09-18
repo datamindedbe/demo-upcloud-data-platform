@@ -1,4 +1,9 @@
-# Upcloud data-platform
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![APACHE License][license-shield]][license-url]
+
+# Upcloud data platform
 
 This repo contains the code for building an open-source data platform on [Upcloud](https://upcloud.com/).
 
@@ -63,4 +68,42 @@ If all went well, you should now have access to Zitadel, go to `https://zitadel.
 - Put the key in the `infra/apps` directory as `token.json`
 
 8. Create the `terraform.tfvars` using the provided template, the organization ID can be retrieved from the Zitadel UI.
-9. run `tofu apply -var-file=terraform.tfvars` in the `infra/apps` directory to create the remaining services.
+9. run `tofu apply -var-file=terraform.tfvars` in the `infra/apps` directory to setup the remaining services.
+
+## Your first query
+
+1. Run `tofu output s3_warehouse_info` in the `infra/foundation` folder to get the S3 information required for the lakekeeper warehouse.
+2. Go to the Lakekeeper UI at `https://lakekeeper.<your-domain>/ui` and login. Now create a new warehouse using the following settings:
+```
+Warehouse Name: iceberg
+Storage Type: s3
+Bucket: <BUCKET_NAME from s3_warehouse_info>
+Key Prefix: <PREFIX you want in the bucket>
+Assume Role ARN: /
+Endpoint: <ENDPOINT from s3_warehouse_info>
+Region : <REGION from s3_warehouse_info>
+Path Style Access: /
+STS Role ARN: /
+STS Enabled: No
+Flavor: s3-compat
+```
+
+3. Now use a SQL client (e.g. DBeaver) or trino CLI to connect to Trino at `https://trino.<your-domain>`.
+4. Run the following commands to create a new Iceberg table:
+```
+CREATE SCHEMA iceberg.demo;
+CREATE TABLE iceberg.demo.yearly_clicks(year, clicks) as VALUES (2021,10000),(2022,20000)
+SELECT * FROM iceberg.demo.yearly_clicks;
+```
+
+[contributors-shield]: https://img.shields.io/github/contributors/datamindedbe/demo-upcloud-data-platform.svg?style=for-the-badge
+
+[contributors-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/datamindedbe/demo-upcloud-data-platform.svg?style=for-the-badge
+
+[forks-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/network/members
+
+[license-shield]: https://img.shields.io/github/license/datamindedbe/demo-upcloud-data-platform.svg?label=license&style=for-the-badge
+
+[license-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/blob/master/LICENSE.md
