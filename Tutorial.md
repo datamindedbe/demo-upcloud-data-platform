@@ -3,6 +3,9 @@
 This tutorial walks you through setting up a cloud-agnostic, open-source data platform on Upcloud [opentofu](https://opentofu.org/). 
 All the necessary code is available in [Github](https://github.com/datamindedbe/demo-upcloud-data-platform)
 
+Estimated deployment time: ~30–45 minutes (most of it waiting for the Kubernetes cluster, Load balancer and managed database to be ready). 
+Expected cost: ~10€X/day for the demo setup.”
+
 ## Architecture overview
 
 Before we start, here is a high-level overview of the architecture and components used in this demo data platform.
@@ -23,6 +26,13 @@ Before starting the deployment, make sure you have:
 - A hosted domain and DNS provider (e.g., Route53, GoDaddy) for assigning a subdomain to the data platform stack.
 - Installed [OpenTofu](https://opentofu.org/), [kubectl](https://kubernetes.io/docs/reference/kubectl/), AWS CLI (for the S3-compatible object storage backend)
 
+Before diving into infra deployment, include quick sanity checks:
+```bash
+tofu --version
+kubectl version --client
+helm version
+aws --version
+```
 ## Deploying the platform
 Now you are ready to start deploying the platform on Upcloud.
 
@@ -87,8 +97,8 @@ tofu apply -var-file=terraform.tfvars
 ```
 
 In order to validate that everything is working correctly, make sure that the zitadel service is reachable at `https://zitadel.<your-domain>` (replace <your-domain> with the domain you configured).
+The login page looks like this: ![Zitadel Login](docs/zitadelLogin.png)
 If this is not working, double check your DNS configuration and the Traefik, Zitadel pods in kubernetes for any errors.
-
 
 ### Step 3: Create a Zitadel service user
 Before we can setup the remainder of our stack, we need to create a service user in Zitadel.
@@ -109,6 +119,13 @@ Now we are ready to deploy the applications that make up our data platform stack
 tofu init -var-file=terraform.tfvars
 tofu apply -var-file=terraform.tfvars
 ```
+
+## Troubleshooting tips
+
+- Trino won’t start? Check `kubectl get pods -n services -l app.kubernetes.io/instance=trino` and `kubectl logs -n services <pod-name>` for crash logs.
+- DNS not resolving, getting connection refused when browsing to one of the services? Make sure the A record is added to your DNS provicer with the Traefik LB IP.
+- SSL certificate errors? Check the logs of the traefik pod `kubectl logs -n traefik <traefik-pod-name>`. Also double check your Loadbalancer configuration in Upcloud.
+- Zitadel login fails? Verify that your DNS + SSL certificates are configured correctly.
 
 ## Using the data platform
 
@@ -173,7 +190,23 @@ In order to make this stack production ready, you will need to take care of the 
 - Harden OPA policies to enforce strict access cotnrol in Trino and Lakekeeper At the moment we allow all actions, but we provide the necessary rego files to restrict access using Lakekeeper.
   For more information, check [our blog on the topic](https://medium.com/datamindedbe/locking-down-your-data-fine-grained-data-access-on-eu-clouds-41e3d5108062) as well as the [Lakekeeper OPA bridge](https://docs.lakekeeper.io/docs/latest/opa/) for the details.
 - Enable Zitadel based OIDC authentication for both uses and inter-service communication.
-- Extend the stack with additional components such as Airflow for orchestration, Hashicorp Vault for secrets management.
+- Enable autoscaling of your kubernetes cluster by deploying the [cluster-autoscaler](https://upcloud.com/docs/guides/cluster-autoscaler/).
+- Extend the stack with additional components such as Airflow for orchestration, Hashicorp Vault for secret management.
+
+## Cleaning up
+If you want to tear down the platform, you can do it as follows:
+```bash
+cd infra/apps
+tofu destroy -var-file=terraform.tfvars
+
+cd ../foundation
+tofu destroy -var-file=terraform.tfvars -target=module.traefik -target=module.zitadel
+# Now you can destroy the rest of the resources
+tofu destroy -var-file=terraform.tfvars
+
+cd ../bootstrap
+tofu destroy
+```
 
 ## Support
 If you have any questions or run into issues, feel free to open an issue in this Github repo or reach out to me (`niels.claeys@dataminded.com`) or anyone else at Dataminded.
