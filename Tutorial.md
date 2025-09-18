@@ -28,7 +28,7 @@ Before you can start applying the data platform stack, make sure you have the fo
 ## Deploying the platform
 Now you are ready to start deploying the platform on Upcloud.
 
-### Clone our repo and initialize the backend
+### Clone the repo and initialize the s3 bucket for storing opentofu state
 
 ```
 git clone https://github.com/datamindedbe/demo-upcloud-data-platform.git
@@ -102,7 +102,7 @@ This will allow us to configure authentication (using oauth) for every applicati
 - Put the key in the `infra/apps` directory as a `token.json` file.
 - Look up the organization ID in the Zitadel UI, you will need it in the next step.
 
-### Deploy our applications
+### Deploy the applications
 Now we are ready to deploy the applications that make up our data platform stack: OPA, Lakekeeper and Trino.
 
 - create `terraform.tfvars` from the `terraform.tfvars.example` and update the variables as needed.
@@ -112,7 +112,7 @@ tofu init -var-file=terraform.tfvars
 tofu apply -var-file=terraform.tfvars
 ```
 
-### Configure your warehouse
+### Configure your warehouse in Lakekeeper
 Before you can run SQL queries, you need to configure a Lakekeeper warehouse that points to the S3-compatible object storage that we have just created.
 
 To get the necessary information, run the following command in the `infra/foundation` folder:
@@ -124,7 +124,7 @@ Now go to the Lakekeeper UI at `https://lakekeeper.<your-domain>/ui` and login.
 From there click on `Warehouses` in the left menu and then click on `Create Warehouse`.
 Fill in the form using the information retrieved from the previous command.
 
-### Running your first query
+### Running your first queries
 You can now run your first SQL queries against Trino. You can use your favorite SQL client that supports Trino or use the Trino CLI.
 
 - Download the Trino CLI if you haven't done this already:
