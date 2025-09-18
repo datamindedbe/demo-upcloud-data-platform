@@ -7,13 +7,14 @@ All the necessary code is available in [Github](https://github.com/datamindedbe/
 
 Before we start, here is a high-level overview of the architecture and components used in this demo data platform.
 
-- Trino: distributed SQL query engine. It is designed to handle both small and large scale datasets and supports a wide range of data sources.
+![Architecture](docs/architecture.png)
+
+- **[Trino](https://trino.io/)**: distributed SQL query engine. It is designed to handle both small and large scale datasets and supports a wide range of data sources.
   It allows us to setup a data warehouse ourselves in environments that have no managed service for it.
-- Lakekeeper: The production-ready data catalog to store metadata about our iceberg tables. 
-- Open policy agent (OPA): The general-purpose policy engine. This will be used to enforce fine-grained access control in Trino and Lakekeeper.
-- Traefik: The application proxy for our full data platform stack. It allows us to configure SSL and routing to the different services.
-- Zitadel: Perform authentication management for users as well as applications and integrate with your company's identity provider.
-(Assumes you already have the tools installed: OpenTofu, kubectl, helm — same as your README.)
+- **[Lakekeeper](https://docs.lakekeeper.io/)**: The production-ready data catalog to store metadata about our iceberg tables. 
+- **Open policy agent (OPA)**: The general-purpose policy engine. This will be used to enforce fine-grained access control in Trino and Lakekeeper.
+- **[Traefik](https://traefik.io/)**: The application proxy for our full data platform stack. It allows us to configure SSL and routing to the different services.
+- **[Zitadel](https://zitadel.com/)**: Perform authentication management for users as well as applications and integrate with your company's identity provider.
 
 ## Prerequisites
 Before you can start applying the data platform stack, make sure you have the following in place:
