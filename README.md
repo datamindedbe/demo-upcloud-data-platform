@@ -1,4 +1,9 @@
-# Upcloud data-platform
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![APACHE License][license-shield]][license-url]
+
+# Upcloud data platform
 
 This repo contains the code for building an open-source data platform on [Upcloud](https://upcloud.com/).
 
@@ -90,3 +95,15 @@ CREATE SCHEMA iceberg.demo;
 CREATE TABLE iceberg.demo.yearly_clicks(year, clicks) as VALUES (2021,10000),(2022,20000)
 SELECT * FROM iceberg.demo.yearly_clicks;
 ```
+
+[contributors-shield]: https://img.shields.io/github/contributors/datamindedbe/demo-upcloud-data-platform.svg?style=for-the-badge
+
+[contributors-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/datamindedbe/demo-upcloud-data-platform.svg?style=for-the-badge
+
+[forks-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/network/members
+
+[license-shield]: https://img.shields.io/github/license/datamindedbe/demo-upcloud-data-platform.svg?label=license&style=for-the-badge
+
+[license-url]: https://github.com/datamindedbe/demo-upcloud-data-platform/blob/master/LICENSE.md
