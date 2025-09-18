@@ -26,13 +26,19 @@ opa:
 useHttps: false
 
 image:
-  repository: openpolicyagent/opa
-  tag: "1.3.0" # Specify the OPA version you want to use
+  repository: nilli9990/demo-upcloud-opa
+  tag: "latest"
   pullPolicy: Always
 
 extraArgs:
   - --log-level=debug
   - --set=decision_logs.console=true
+
+extraEnv:
+  - name: TRINO_LAKEKEEPER_CATALOG_NAME
+    value: "iceberg"
+  - name: LAKEKEEPER_LAKEKEEPER_WAREHOUSE
+    value: "iceberg"
 
 authz:
   enabled: false
