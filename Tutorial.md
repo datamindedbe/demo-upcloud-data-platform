@@ -209,6 +209,6 @@ tofu destroy
 ```
 
 ## Support
-If you have any questions or run into issues, feel free to open an issue in this Github repo or reach out to me (`niels.claeys@dataminded.com`) or anyone else at Dataminded.
+If you have any questions or run into issues, feel free to open an issue in this Github repo or reach out to `niels.claeys@dataminded.com` or anyone else at Dataminded.
 
 If you want guidance on how to extend this stack or make it production ready, reach out to us at [DataMinded](https://www.dataminded.com/contact).
