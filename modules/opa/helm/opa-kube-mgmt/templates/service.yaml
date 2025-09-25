@@ -1,0 +1,28 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "opa.fullname" . }}
+  labels:
+{{ include "opa.labels.standard" . | indent 4 }}
+{{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  selector:
+    app: {{ template "opa.fullname" . }}
+  ports:
+  - name: opa
+    port: {{ .Values.port }}
+    targetPort: opa
+{{- if .Values.prometheus.enabled }}
+  - name: diag
+    port: {{ .Values.prometheus.port }}
+    targetPort: diag
+{{- end }}
+{{- if .Values.extraPorts }}
+{{ toYaml .Values.extraPorts | indent 2}}
+{{- end }}
+{{- if .Values.service.trafficDistribution }}
+  trafficDistribution: {{ .Values.service.trafficDistribution }}
+{{- end }}
