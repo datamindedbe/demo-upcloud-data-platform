@@ -1,0 +1,297 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "opa.fullname" . }}
+  labels:
+{{ include "opa.labels.standard" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "opa.fullname" . }}
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.opa }}
+        checksum/config: {{ tpl (toYaml .Values.opa) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.admissionController.enabled }}
+        checksum/webhookconfiguration: {{ include (print $.Template.BasePath "/webhookconfiguration.yaml" ) . | sha256sum }}
+        {{- end }}
+{{- if .Values.annotations }}
+{{ toYaml .Values.annotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "opa.fullname" . }}
+      name: {{ template "opa.fullname" . }}
+    spec:
+{{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+{{- end }}
+{{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+{{- end }}
+{{- if or .Values.authz.enabled .Values.bootstrapPolicies}}
+      initContainers:
+        - name: initpolicy
+          image: {{ include "opa.mgmt.image" . }}
+          imagePullPolicy: {{ .Values.mgmt.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.mgmt.resources | indent 12 }}
+          command:
+          - /bin/sh
+          - -c
+          - |
+{{- if .Values.authz.enabled }}
+{{- if .Values.authz.mgmtToken}}
+            cat /mgmt-token-secret/mgmt-token > /bootstrap/mgmt-token
+{{- else }}
+            tr -dc 'A-F0-9' < /dev/urandom | dd bs=1 count=32 2>/dev/null > /bootstrap/mgmt-token
+{{- end }}
+            TOKEN=`cat /bootstrap/mgmt-token`
+            cat > /bootstrap/authz.rego <<EOF
+            package system.authz
+            import rego.v1
+            default allow := false
+            # Allow anonymous access to the default policy decision.
+            allow if { input.path = [""]; input.method == "POST" }
+            allow if { input.path = [""]; input.method == "GET" }
+            # This is only used for health check in liveness and readiness probe
+            allow if { input.path = ["health"]; input.method == "GET" }
+{{- if .Values.prometheus.enabled }}
+            # This allows metrics to be scraped by prometheus
+            allow if { input.path = ["metrics"]; input.method == "GET" }
+{{- end }}
+            allow if { input.identity == "$TOKEN" }
+            EOF
+{{- end }}
+{{- range $policyName, $policy := .Values.bootstrapPolicies }}
+            cat > /bootstrap/{{ $policyName }}.rego <<EOF
+{{ $policy | indent 12 }}
+            EOF
+{{- end }}
+          volumeMounts:
+            - name: bootstrap
+              mountPath: /bootstrap
+{{- if .Values.authz.mgmtToken}}
+            - name: mgmt-token-secret
+              mountPath: /mgmt-token-secret
+              readOnly: true
+{{- end }}
+{{- end }}
+{{- if .Values.hostNetwork.enabled }}
+      hostNetwork: true
+{{- end }}
+      {{- include "opa.dnsPolicy" . | nindent 6 -}}
+      containers:
+        - name: opa
+          ports:
+          - name: opa
+            containerPort: {{ .Values.port }}
+{{- if .Values.prometheus.enabled }}
+          - name: diag
+            containerPort: {{ .Values.prometheus.port }}
+{{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+{{- if .Values.extraEnv }}
+{{ toYaml .Values.extraEnv | indent 12 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          args:
+            - "run"
+            - "--server"
+            {{- if .Values.opa }}
+            - "--config-file=/config/config.yaml"
+            {{- end }}
+            {{- if .Values.useHttps }}
+            - "--tls-cert-file=/certs/tls.crt"
+            - "--tls-private-key-file=/certs/tls.key"
+            {{- end }}
+            - "--addr=0.0.0.0:{{ .Values.port }}"
+            - "--log-level={{ .Values.logLevel }}"
+            - "--log-format={{ .Values.logFormat }}"
+            {{- if .Values.authz.enabled }}
+            - "--authentication=token"
+            - "--authorization=basic"
+            - "--ignore=.*"
+            {{- end }}
+            {{- if .Values.prometheus.enabled }}
+            - "--diagnostic-addr=http://0.0.0.0:{{ .Values.prometheus.port }}"
+            {{- end }}
+            {{- if or .Values.authz.enabled .Values.bootstrapPolicies }}
+            - "/bootstrap"
+            {{- end }}
+            {{ if .Values.policyDirectory}}
+            - "{{ .Values.policyDirectory}}"
+            {{- end }}
+            {{- range .Values.extraArgs }}
+            - {{ . }}
+            {{- end }}
+          volumeMounts:
+            {{- if .Values.useHttps }}
+            - name: certs
+              readOnly: true
+              mountPath: /certs
+            {{- end }}
+            {{- if .Values.opa }}
+            - name: config
+              readOnly: true
+              mountPath: /config
+            {{- end }}
+{{- if or .Values.authz.enabled .Values.bootstrapPolicies }}
+            - name: bootstrap
+              readOnly: true
+              mountPath: /bootstrap
+{{- end }}
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 12}}
+{{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              scheme: {{ .Values.useHttps | ternary "HTTPS" "HTTP" }}
+              port: opa
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              scheme: {{ .Values.useHttps | ternary "HTTPS" "HTTP" }}
+              port: opa
+            initialDelaySeconds: 10
+            periodSeconds: 15
+{{- if .Values.mgmt.enabled }}
+        - name: mgmt
+          image: {{ include "opa.mgmt.image" . }}
+          imagePullPolicy: {{ .Values.mgmt.image.pullPolicy }}
+          startupProbe:
+{{ toYaml .Values.mgmt.startupProbe | nindent 12 }}
+          env:
+{{- if .Values.mgmt.extraEnv }}
+{{ toYaml .Values.mgmt.extraEnv | indent 12 }}
+{{- end }}
+          resources:
+            {{ toYaml .Values.mgmt.resources | nindent 12 }}
+          args:
+            {{- if .Values.authz.enabled }}
+            - --opa-auth-token-file=/bootstrap/mgmt-token
+            {{- end }}
+            - --opa-url={{ .Values.useHttps | ternary "https" "http" }}://127.0.0.1:{{ .Values.port }}/v1
+            - --opa-allow-insecure
+            - "--namespaces={{ coalesce .Values.mgmt.namespaces (list .Release.Namespace) | join "," }}"
+            - "--enable-data={{ .Values.mgmt.data.enabled }}"
+            - "--enable-policies={{ .Values.mgmt.policies.enabled }}"
+
+            - "--replicate-path={{ .Values.mgmt.replicate.path }}"
+            {{- range .Values.mgmt.replicate.namespace }}
+            - "--replicate={{ . }}"
+            {{- end }}
+            {{- range .Values.mgmt.replicate.cluster }}
+            - "--replicate-cluster={{ . }}"
+            {{- end }}
+            {{- if .Values.mgmt.replicate.ignoreNs }}
+            - "--replicate-ignore-namespaces={{ .Values.mgmt.replicate.ignoreNs | join "," }}"
+            {{- else }}
+            - "--replicate-ignore-namespaces="
+            {{- end }}
+            {{- if .Values.mgmt.replicate.auto }}
+            - "--opa-config=/config/config.yaml"
+            - "--health-endpoint=0.0.0.0:8000"
+            {{- end }}
+            {{- range .Values.mgmt.extraArgs }}
+            - {{ . }}
+            {{- end }}
+          volumeMounts:
+{{- if or .Values.authz.enabled .Values.bootstrapPolicies }}
+            - name: bootstrap
+              readOnly: true
+              mountPath: /bootstrap
+{{- end }}
+{{- if .Values.opa }}
+            - name: config
+              readOnly: true
+              mountPath: /config
+{{- end }}
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 12}}
+{{- end }}
+{{- if .Values.mgmt.replicate.auto }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+{{- end }}
+{{- end }}
+{{- if .Values.sar.enabled }}
+        - name: sarproxy
+          image: {{ .Values.sar.image.repository }}:{{ .Values.sar.image.tag }}
+          imagePullPolicy: {{ .Values.sar.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.sar.resources | indent 12 }}
+          command:
+            - kubectl
+            - proxy
+            - --accept-paths=^/apis/authorization.k8s.io/v1/subjectaccessreviews$
+{{- end }}
+{{- if .Values.extraContainers }}
+{{ toYaml .Values.extraContainers | indent 8}}
+{{- end }}
+      {{- if .Values.securityContext.enabled }}
+      securityContext:
+        {{- range $key, $val := .Values.securityContext }}
+        {{- if ne $key "enabled" }}
+        {{ $key }}: {{ toYaml $val | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      serviceAccountName: {{ template "opa.serviceAccountName" .}}
+      volumes:
+        {{- if .Values.useHttps }}
+        - name: certs
+          secret:
+            secretName: {{ template "opa.fullname" . }}-cert
+        {{- end }}
+        {{- if .Values.opa }}
+        - name: config
+          secret:
+            secretName: {{ template "opa.fullname" . }}-config
+        {{- end }}
+{{- if or .Values.authz.enabled .Values.bootstrapPolicies}}
+        - name: bootstrap
+          emptyDir: {}
+{{- if .Values.authz.mgmtToken}}
+        - name: mgmt-token-secret
+          secret:
+            secretName: {{.Values.authz.mgmtToken.secretName}}
+            items:
+              - key: {{ .Values.authz.mgmtToken.secretKey | default "mgmtToken" }}
+                path: mgmt-token
+{{- end }}
+{{- end }}
+{{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 8}}
+{{- end }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}

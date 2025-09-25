@@ -1,0 +1,37 @@
+{{- if and .Values.rbac.create .Values.mgmt.enabled -}}
+{{- $arr := concat .Values.mgmt.replicate.cluster .Values.mgmt.replicate.namespace -}}
+{{- if or (gt (len $arr) 0) .Values.mgmt.replicate.auto }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: {{ template "opa.name" . }}
+    chart: {{ template "opa.chart" . }}
+    release: {{ .Release.Name }}
+    component: mgmt
+  name: "{{ template "opa.mgmtfullname" . }}-repl"
+rules:
+  {{- with .Values.rbac.extraRules }}
+  {{ . | toYaml | nindent 2 }}
+  {{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: {{ template "opa.name" . }}
+    chart: {{ template "opa.chart" . }}
+    release: {{ .Release.Name }}
+    component: mgmt
+  name: "{{ template "opa.mgmtfullname" . }}-repl"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "{{ template "opa.mgmtfullname" . }}-repl"
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "opa.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- end -}}

@@ -7,22 +7,15 @@ terraform {
   }
 }
 resource "helm_release" "opa" {
-  chart = "opa-kube-mgmt"
-  repository = "https://open-policy-agent.github.io/kube-mgmt/charts"
-  version = "9.1.0"
+  chart = "${path.module}/helm/opa-kube-mgmt"
   name  = "opa"
   namespace = "opa"
+  max_history = 10
   values = [
     <<EOF
-opa:
-  args:
-    - run
-    - --server
-    - --addr=0.0.0.0:8181
-    - --log-level=debug
-    - --log-format=json
-    - --set=decision_logs.console=true
-    - /var/lib/opa/policies
+logLevel: debug
+logFormat: json
+policyDirectory: /var/lib/opa/policies
 useHttps: false
 
 image:
@@ -31,7 +24,6 @@ image:
   pullPolicy: Always
 
 extraArgs:
-  - --log-level=debug
   - --set=decision_logs.console=true
 
 extraEnv:

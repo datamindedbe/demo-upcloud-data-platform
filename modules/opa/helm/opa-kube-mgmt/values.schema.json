@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/open-policy-agent/kube-mgmt",
+  "title": "kube-mgmt helm values",
+
+  "definitions": {
+    "image": {
+      "type": "object", "title": "OPA docker image configuration", "required": ["repository", "tag"],
+      "properties": {
+        "repository": {"type": "string"},
+        "tag": {"type": "string"},
+        "pullPolicy": {"type": "string", "default": "IfNotPresent"}
+      }
+    }
+  },
+
+  "type": "object", "required": ["image", "mgmt"], "additionalProperties": true,
+  "properties": {
+    "image": {"$ref":  "#/definitions/image"},
+    "mgmt": {
+      "type": "object", "additionalProperties": true, "required": ["image", "enabled"],
+      "properties": {
+        "enabled": {"type": "boolean", "default": true},
+        "image": {"$ref": "#/definitions/image"}
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": {"type": "boolean", "default": true},
+        "annotations": {"type": "object", "additionalProperties": {"type": "string"}, "default": {}},
+        "name": {"type": ["string", "null"], "default": null}
+      }
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "default": {}
+        },
+        "trafficDistribution": {
+          "type": ["null","string"],
+          "enum": ["PreferClose", "PreferSameNode", "PreferSameZone", null],
+          "default": null
+        }
+      }
+    }
+  }
+}
