@@ -14,10 +14,10 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | 2.5.3 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.7.2 |
-| <a name="provider_upcloud"></a> [upcloud](#provider\_upcloud) | 5.25.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0  |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.5.3   |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.3   |
+| <a name="provider_upcloud"></a> [upcloud](#provider\_upcloud) | 5.25.0  |
 
 ## Modules
 
