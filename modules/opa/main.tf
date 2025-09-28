@@ -7,9 +7,9 @@ terraform {
   }
 }
 resource "helm_release" "opa" {
-  chart = "${path.module}/helm/opa-kube-mgmt"
-  name  = "opa"
-  namespace = "opa"
+  chart       = "${path.module}/helm/opa-kube-mgmt"
+  name        = "opa"
+  namespace   = "opa"
   max_history = 10
   values = [
     <<EOF

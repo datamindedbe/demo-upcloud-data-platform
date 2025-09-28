@@ -9,7 +9,7 @@ resource "zitadel_project" "trino" {
 
 resource "zitadel_application_oidc" "trino" {
   project_id = zitadel_project.trino.id
-  org_id = data.zitadel_org.default.id
+  org_id     = data.zitadel_org.default.id
 
   name                      = "trino"
   redirect_uris             = ["https://trino.${var.hosted_domain}/oauth2/callback"]

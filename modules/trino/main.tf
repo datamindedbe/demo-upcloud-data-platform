@@ -8,10 +8,10 @@ terraform {
 }
 resource "helm_release" "trino" {
   repository = "https://trinodb.github.io/charts/"
-  chart = "trino"
-  version = "1.39.0"
-  name  = "trino"
-  namespace = "services"
+  chart      = "trino"
+  version    = "1.39.0"
+  name       = "trino"
+  namespace  = "services"
   values = [
     <<EOF
 additionalConfigProperties: []

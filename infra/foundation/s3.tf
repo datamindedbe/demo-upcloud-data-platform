@@ -9,10 +9,10 @@ resource "upcloud_managed_object_storage" "dp-stack-data" {
     type   = "public"
   }
 
-    labels = {
-        managed_by = "terraform"
-        project    = var.resource_prefix
-    }
+  labels = {
+    managed_by = "terraform"
+    project    = var.resource_prefix
+  }
 }
 
 resource "upcloud_managed_object_storage_bucket" "bucket" {

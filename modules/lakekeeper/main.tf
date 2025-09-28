@@ -8,10 +8,10 @@ terraform {
 }
 resource "helm_release" "lakekeeper" {
   repository = "https://lakekeeper.github.io/lakekeeper-charts"
-  chart = "lakekeeper"
-  version = "0.6.0"
-  name  = "lakekeeper"
-  namespace = "services"
+  chart      = "lakekeeper"
+  version    = "0.6.0"
+  name       = "lakekeeper"
+  namespace  = "services"
   wait       = false
   values = [
     <<EOF

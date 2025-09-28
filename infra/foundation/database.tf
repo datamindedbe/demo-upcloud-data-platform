@@ -8,14 +8,14 @@ resource "upcloud_managed_database_postgresql" "db" {
     timezone       = "Europe/Helsinki"
     admin_username = "admin"
     admin_password = random_password.db_admin_password.result
-    version = "17"
+    version        = "17"
   }
-  maintenance_window_dow = "monday"
+  maintenance_window_dow  = "monday"
   maintenance_window_time = "20:00:00"
 
   labels = {
     managed_by = "terraform"
-    project = var.resource_prefix
+    project    = var.resource_prefix
   }
 }
 
@@ -56,10 +56,10 @@ resource "kubernetes_secret" "pg_credentials" {
 
 resource "kubernetes_secret" "zitadel_db" {
   metadata {
-    name = "zitadel-credentials"
+    name      = "zitadel-credentials"
     namespace = kubernetes_namespace.services.metadata[0].name
   }
-  data = { "config.yaml": <<EOF
+  data = { "config.yaml" : <<EOF
     Database:
       Postgres:
         Host: ${upcloud_managed_database_postgresql.db.service_host}
@@ -87,18 +87,18 @@ resource "upcloud_managed_database_logical_database" "lakekeeper_db" {
 
 resource "kubernetes_secret" "lakekeeper_db" {
   metadata {
-    name = "lakekeeper-custom-secrets"
+    name      = "lakekeeper-custom-secrets"
     namespace = "services"
   }
   data = {
-    ICEBERG_REST__PG_HOST_R=upcloud_managed_database_postgresql.db.service_host
-    ICEBERG_REST__PG_HOST_W=upcloud_managed_database_postgresql.db.service_host
-    ICEBERG_REST__PG_PORT=upcloud_managed_database_postgresql.db.service_port
-    ICEBERG_REST__PG_PASSWORD=upcloud_managed_database_postgresql.db.service_password
-    ICEBERG_REST__PG_DATABASE=upcloud_managed_database_logical_database.lakekeeper_db.name
-    ICEBERG_REST__PG_USER=upcloud_managed_database_postgresql.db.service_username
-    ICEBERG_REST__SECRETS_BACKEND="Postgres"
-    LAKEKEEPER__AUTHZ_BACKEND="allowall"
+    ICEBERG_REST__PG_HOST_R       = upcloud_managed_database_postgresql.db.service_host
+    ICEBERG_REST__PG_HOST_W       = upcloud_managed_database_postgresql.db.service_host
+    ICEBERG_REST__PG_PORT         = upcloud_managed_database_postgresql.db.service_port
+    ICEBERG_REST__PG_PASSWORD     = upcloud_managed_database_postgresql.db.service_password
+    ICEBERG_REST__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db.name
+    ICEBERG_REST__PG_USER         = upcloud_managed_database_postgresql.db.service_username
+    ICEBERG_REST__SECRETS_BACKEND = "Postgres"
+    LAKEKEEPER__AUTHZ_BACKEND     = "allowall"
   }
   depends_on = [kubernetes_namespace.services]
 }

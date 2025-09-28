@@ -14,7 +14,7 @@ resource "upcloud_router" "router" {
   name = "${var.resource_prefix}-k8s-router"
   labels = {
     managed_by = "terraform"
-    project = var.resource_prefix
+    project    = var.resource_prefix
   }
 }
 
@@ -29,6 +29,6 @@ resource "upcloud_gateway" "gw" {
 
   labels = {
     managed_by = "terraform"
-    project = var.resource_prefix
+    project    = var.resource_prefix
   }
 }
