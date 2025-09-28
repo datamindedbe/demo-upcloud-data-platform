@@ -1,0 +1,35 @@
+name: Terraform Validation
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+
+jobs:
+  terraform:
+    name: Validate OpenTofu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Tofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.10.5
+
+      - name: Tofu Format
+        run: tofu fmt -check -recursive
+
+      - name: Tofu Init
+        run: tofu init -backend=false
+
+      - name: Tofu Validate
+        run: tofu validate
