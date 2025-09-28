@@ -33,3 +33,11 @@ jobs:
 
       - name: Tofu Validate
         run: tofu validate
+
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: tflint --recursive

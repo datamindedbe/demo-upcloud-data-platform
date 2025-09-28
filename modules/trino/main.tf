@@ -1,11 +1,3 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.16.1"
-    }
-  }
-}
 resource "helm_release" "trino" {
   repository = "https://trinodb.github.io/charts/"
   chart      = "trino"

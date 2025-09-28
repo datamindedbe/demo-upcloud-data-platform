@@ -21,4 +21,5 @@ terraform {
       sts = "https://${var.storage_bucket_domain_name}:4443/sts"
     }
   }
+  required_version = "1.10.5"
 }

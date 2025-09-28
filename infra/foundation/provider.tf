@@ -8,6 +8,18 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.38.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.16.1"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.3"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "2.4.0"
+    }
   }
 }
 

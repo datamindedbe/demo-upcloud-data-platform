@@ -1,11 +1,3 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.16.1"
-    }
-  }
-}
 resource "helm_release" "traefik" {
   chart      = "traefik"
   repository = "https://helm.traefik.io/traefik"

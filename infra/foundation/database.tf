@@ -4,7 +4,7 @@ resource "upcloud_managed_database_postgresql" "db" {
   title = "postgres"
   zone  = local.zone
   properties {
-    public_access  = true
+    public_access  = var.db_allow_public_access
     timezone       = "Europe/Helsinki"
     admin_username = "admin"
     admin_password = random_password.db_admin_password.result
