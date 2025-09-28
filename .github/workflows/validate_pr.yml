@@ -43,11 +43,13 @@ jobs:
         run: tflint --recursive
 
       - name: Install terraform-docs
+        working-directory: scripts
         run: |
           curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-Linux-amd64.tar.gz
           tar -xzf terraform-docs.tar.gz
           chmod +x terraform-docs
           mv terraform-docs /usr/local/bin/terraform-docs
+          rm terraform-docs.tar.gz && rm LICENSE && rm README.md
 
       - name: Generate READMEs for modules
         run: ./scripts/generate-readme.sh
