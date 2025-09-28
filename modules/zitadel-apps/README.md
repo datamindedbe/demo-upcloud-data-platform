@@ -31,10 +31,4 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_hosted_domain"></a> [hosted\_domain](#input\_hosted\_domain) | The hosted domain for your data platform. | `string` | n/a | yes |
 | <a name="input_organisation_id"></a> [organisation\_id](#input\_organisation\_id) | The ID of the ZITADEL organisation. | `string` | n/a | yes |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_trino_secret"></a> [trino\_secret](#output\_trino\_secret) | n/a |
 <!-- END_TF_DOCS -->

@@ -41,3 +41,10 @@ jobs:
 
       - name: Run TFLint
         run: tflint --recursive
+
+      - name: Generate READMEs for modules
+        run: ./scripts/generate-readme.sh
+
+      - name: Check dirty
+        run:
+          scripts/check-dirty.sh
