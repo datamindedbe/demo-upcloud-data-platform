@@ -19,3 +19,35 @@ docker push <your-docker-repo>/data-stack-opa:latest
 ```
 
 Make sure to update the image in `modules/opa/main.tf` accordingly.
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.10.5 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.16.1 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.16.1 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [helm_release.opa](https://registry.terraform.io/providers/hashicorp/helm/2.16.1/docs/resources/release) | resource |
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

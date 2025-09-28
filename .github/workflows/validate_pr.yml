@@ -1,0 +1,59 @@
+name: Terraform Validation
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+      - 'modules/**'
+
+jobs:
+  terraform:
+    name: Validate OpenTofu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Tofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.10.5
+
+      - name: Tofu Format
+        run: tofu fmt -check -recursive
+
+      - name: Tofu Init
+        run: tofu init -backend=false
+
+      - name: Tofu Validate
+        run: tofu validate
+
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: tflint --recursive
+
+      - name: Install terraform-docs
+        working-directory: scripts
+        run: |
+          curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-Linux-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          chmod +x terraform-docs
+          mv terraform-docs /usr/local/bin/terraform-docs
+          rm terraform-docs.tar.gz && rm LICENSE && rm README.md
+
+      - name: Generate READMEs for modules
+        run: ./scripts/generate-readme.sh
+
+      - name: Check dirty
+        run:
+          scripts/check-dirty.sh

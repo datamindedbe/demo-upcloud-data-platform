@@ -1,19 +1,11 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.16.1"
-    }
-  }
-}
 resource "helm_release" "traefik" {
-  chart = "traefik"
+  chart      = "traefik"
   repository = "https://helm.traefik.io/traefik"
-  version = "v35.1.0"
-  name  = "traefik"
-  namespace = "traefik"
+  version    = "v35.1.0"
+  name       = "traefik"
+  namespace  = "traefik"
   values = [
-<<EOF
+    <<EOF
 # Enable dashboard access (consider security implications for production)
 ingressRoute:
   dashboard:
@@ -158,6 +150,6 @@ fsGroupChangePolicy: "OnRootMismatch"
 additionalArguments:
   - "--log.level=DEBUG"
 EOF
-]
+  ]
   timeout = 900
 }

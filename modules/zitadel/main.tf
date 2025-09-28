@@ -1,17 +1,9 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.16.1"
-    }
-  }
-}
 resource "helm_release" "zitadel" {
   repository = "https://charts.zitadel.com"
-  chart = "zitadel"
-  name  = "zitadel"
-  namespace = "services"
-  version = "8.13.4"
+  chart      = "zitadel"
+  name       = "zitadel"
+  namespace  = "services"
+  version    = "8.13.4"
   values = [
     <<EOF
 zitadel:

@@ -9,6 +9,7 @@ terraform {
       version = "3.6.3"
     }
   }
+  required_version = "1.10.5"
 }
 
 provider "upcloud" {

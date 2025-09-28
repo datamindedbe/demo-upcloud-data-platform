@@ -1,6 +1,6 @@
-# Deploying an open-source data platform on Upcloud
+# Deploying an open-source data platform on UpCloud
 
-This tutorial walks you through setting up a cloud-agnostic, open-source data platform on Upcloud [opentofu](https://opentofu.org/). 
+This tutorial walks you through setting up a cloud-agnostic, open-source data platform on UpCloud [opentofu](https://opentofu.org/). 
 All the necessary code is available in [Github](https://github.com/datamindedbe/demo-upcloud-data-platform)
 
 Estimated deployment time: ~30–45 minutes (most of it waiting for the Kubernetes cluster, Load balancer and managed database to be ready). 
@@ -13,7 +13,7 @@ Before we start, here is a high-level overview of the architecture and component
 ![Architecture](docs/architecture.png)
 
 - **[Trino](https://trino.io/)**: A distributed SQL engine for interactive queries across large and small datasets
-  It allows us to build a data warehouse on Upcloud without depending on a managed service.
+  It allows us to build a data warehouse on UpCloud without depending on a managed service.
 - **[Lakekeeper](https://docs.lakekeeper.io/)**: The production-ready metadata catalog for Iceberg tables, tightly integrated with Trino and OPA. 
 - **[Open policy agent (OPA)]()**: A general-purpose policy engine used here to enforce fine-grained data access control.
 - **[Traefik](https://traefik.io/)**: A reverse proxy and ingress controller that manages SSL termination and routes traffic to the different services of our data platform.
@@ -22,7 +22,7 @@ Before we start, here is a high-level overview of the architecture and component
 ## Prerequisites
 Before starting the deployment, make sure you have:
 
-- A verified [Upcloud account](https://upcloud.com) with an API enabled subaccount for creating resources.
+- A verified [UpCloud account](https://upcloud.com) with an API enabled subaccount for creating resources.
 - A hosted domain and DNS provider (e.g., Route53, GoDaddy) for assigning a subdomain to the data platform stack.
 - Installed [OpenTofu](https://opentofu.org/), [kubectl](https://kubernetes.io/docs/reference/kubectl/), AWS CLI (for the S3-compatible object storage backend)
 
@@ -34,7 +34,7 @@ helm version
 aws --version
 ```
 ## Deploying the platform
-Now you are ready to start deploying the platform on Upcloud.
+Now you are ready to start deploying the platform on UpCloud.
 
 ### Step 1: Clone the repo and bootstrap Opentofu state storage
 
@@ -45,7 +45,7 @@ cd demo-upcloud-data-platform
 
 As a first step, we need to create the OpenTofu state storage such that our OpenTofu state is stored remotely and can be used by multiple people at the same time.
 
-- export your Upcloud user credentials in your current environment:
+- export your UpCloud user credentials in your current shell:
 ```bash
 export UPCLOUD_USERNAME="your_upcloud_username"
 export UPCLOUD_PASSWORD="your_upcloud_password"
@@ -66,7 +66,7 @@ All the infrastructure code is in the `infra/foundation` folder.
 - create `terraform.tfvars` from the `terraform.tfvars.example` and update the variables as needed
 
 - In order to use the S3-compatible object storage as a backend for OpenTofu, you need to configure your AWS CLI with a profile named `upcloud`.
-  You can find the necessary steps in the [Upcloud object storage overview](https://hub.upcloud.com/object-storage/2.0) in your object storage for S3 programmatic access.
+  You can find the necessary steps in the [UpCloud object storage overview](https://hub.upcloud.com/object-storage/2.0) in your object storage for S3 programmatic access.
 
 - Setup our Postgres database and Kubernetes cluster, which can take 10-15 minutes:
 ```bash
@@ -88,7 +88,7 @@ kubectl get nodes
 tofu apply -var-file=terraform.tfvars -target=module.traefik
 ```
 
-After 5 minutes, Upcloud will assign a public IP address to the load balancer. You can find this in the Upcloud console under Load Balancers -> Services.
+After 5 minutes, UpCloud will assign a public IP address to the load balancer. You can find this in the UpCloud console under Load Balancers -> Services.
 In order to get DNS working, you need to add an A record in your DNS provider that points to the load balancer IP address.
 
 - Finally, you can create the remaining foundation resources using:
@@ -124,7 +124,7 @@ tofu apply -var-file=terraform.tfvars
 
 - Trino won’t start? Check `kubectl get pods -n services -l app.kubernetes.io/instance=trino` and `kubectl logs -n services <pod-name>` for crash logs.
 - DNS not resolving, getting connection refused when browsing to one of the services? Make sure the A record is added to your DNS provicer with the Traefik LB IP.
-- SSL certificate errors? Check the logs of the traefik pod `kubectl logs -n traefik <traefik-pod-name>`. Also double check your Loadbalancer configuration in Upcloud.
+- SSL certificate errors? Check the logs of the traefik pod `kubectl logs -n traefik <traefik-pod-name>`. Also double check your Loadbalancer configuration in UpCloud.
 - Zitadel login fails? Verify that your DNS + SSL certificates are configured correctly.
 
 ## Using the data platform
@@ -182,7 +182,7 @@ SELECT event_type, count(*) as cnt FROM iceberg.demo.events GROUP BY event_type;
 SELECT * FROM iceberg.demo.events ORDER BY ts DESC LIMIT 10;
 ```
 
-Congratulations! Your open-source data platform is now live on Upcloud. You can connect to Trino, create Iceberg tables, insert sample data, and query it using SQL.
+Congratulations! Your open-source data platform is now live on UpCloud. You can connect to Trino, create Iceberg tables, insert sample data, and query it using SQL.
 
 ## Next steps
 In order to make this stack production ready, you will need to take care of the following:

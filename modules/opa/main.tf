@@ -1,15 +1,7 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.16.1"
-    }
-  }
-}
 resource "helm_release" "opa" {
-  chart = "${path.module}/helm/opa-kube-mgmt"
-  name  = "opa"
-  namespace = "opa"
+  chart       = "${path.module}/helm/opa-kube-mgmt"
+  name        = "opa"
+  namespace   = "opa"
   max_history = 10
   values = [
     <<EOF
