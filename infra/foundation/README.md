@@ -3,7 +3,11 @@
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.10.5 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.16.1 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.38.0 |
+| <a name="requirement_local"></a> [local](#requirement\_local) | 2.4.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.6.3 |
 | <a name="requirement_upcloud"></a> [upcloud](#requirement\_upcloud) | 5.25.0 |
 
 ## Providers
@@ -33,9 +37,9 @@
 | [kubernetes_secret.pg_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.s3_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
 | [kubernetes_secret.zitadel_db](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/secret) | resource |
-| [local_sensitive_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file) | resource |
-| [random_password.db_admin_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [random_string.random](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [local_sensitive_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/2.4.0/docs/resources/sensitive_file) | resource |
+| [random_password.db_admin_password](https://registry.terraform.io/providers/hashicorp/random/3.6.3/docs/resources/password) | resource |
+| [random_string.random](https://registry.terraform.io/providers/hashicorp/random/3.6.3/docs/resources/string) | resource |
 | [upcloud_gateway.gw](https://registry.terraform.io/providers/UpCloudLtd/upcloud/5.25.0/docs/resources/gateway) | resource |
 | [upcloud_kubernetes_cluster.this](https://registry.terraform.io/providers/UpCloudLtd/upcloud/5.25.0/docs/resources/kubernetes_cluster) | resource |
 | [upcloud_kubernetes_node_group.default_group](https://registry.terraform.io/providers/UpCloudLtd/upcloud/5.25.0/docs/resources/kubernetes_node_group) | resource |

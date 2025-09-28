@@ -24,6 +24,7 @@ Make sure to update the image in `modules/opa/main.tf` accordingly.
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.10.5 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.16.1 |
 
 ## Providers

@@ -3,6 +3,7 @@
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.10.5 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.16.1 |
 
 ## Providers
@@ -25,7 +26,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_admin_email"></a> [admin\_email](#input\_admin\_email) | n/a | `any` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | n/a | `string` | n/a | yes |
 
 ## Outputs

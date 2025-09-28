@@ -15,6 +15,7 @@ This directory is used to bootstrap storage bucket on UpCloud, which will be use
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | 1.10.5 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | 3.6.3 |
 | <a name="requirement_upcloud"></a> [upcloud](#requirement\_upcloud) | 5.25.0 |
 
