@@ -10,7 +10,7 @@ Expected cost: ~10€X/day for the demo setup.”
 
 Before we start, here is a high-level overview of the architecture and components used in this demo data platform.
 
-![Architecture](docs/architecture.png)
+![Architecture](architecture.png)
 
 - **[Trino](https://trino.io/)**: A distributed SQL engine for interactive queries across large and small datasets
   It allows us to build a data warehouse on UpCloud without depending on a managed service.
@@ -97,16 +97,16 @@ tofu apply -var-file=terraform.tfvars
 ```
 
 In order to validate that everything is working correctly, make sure that the zitadel service is reachable at `https://zitadel.<your-domain>` (replace <your-domain> with the domain you configured).
-The login page looks like this: ![Zitadel Login](docs/zitadelLogin.png)
+The login page looks like this: ![Zitadel Login](zitadelLogin.png)
 If this is not working, double check your DNS configuration and the Traefik, Zitadel pods in kubernetes for any errors.
 
 ### Step 3: Create a Zitadel service user
 Before we can setup the remainder of our stack, we need to create a service user in Zitadel.
 This will allow us to configure authentication (using oauth) for every application on our stack.
 
-- Go to the service users tab and create a new service user. ![Create service user](docs/CreateZitadelServiceUser.png)
+- Go to the service users tab and create a new service user. ![Create service user](CreateZitadelServiceUser.png)
 - Make sure to assign the service user the `Org owner` and `Iam owner` roles.
-- Create a key for the service user. Zitadel will create the json key that you need for the OpenTofu provider. ![Create Key Service user](docs/CreateKeyForZitadelServiceUser.png)
+- Create a key for the service user. Zitadel will create the json key that you need for the OpenTofu provider. ![Create Key Service user](CreateKeyForZitadelServiceUser.png)
 - Put the key in the `infra/apps` directory as a `token.json` file.
 - Look up the organization ID in the Zitadel UI, you will need it in the next step.
 
@@ -211,4 +211,4 @@ tofu destroy
 ## Support
 If you have any questions or run into issues, feel free to open an issue in this Github repo or reach out to `niels.claeys@dataminded.com` or anyone else at Dataminded.
 
-If you want guidance on how to extend this stack or make it production ready, reach out to us at [DataMinded](https://www.dataminded.com/contact).
+If you want guidance on how to extend this stack or make it production ready, you can reach out to us at [DataMinded](https://www.dataminded.com/contact).
