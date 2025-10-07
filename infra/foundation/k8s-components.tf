@@ -1,6 +1,6 @@
 module "traefik" {
-  source      = "../../modules/traefik"
-  domain      = var.hosted_domain
+  source = "../../modules/traefik"
+  domain = var.hosted_domain
 }
 module "zitadel" {
   source              = "../../modules/zitadel"
