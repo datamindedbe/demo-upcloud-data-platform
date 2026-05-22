@@ -42,6 +42,10 @@ ingress:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
+      # Backend service uses HTTP (Airflow webserver default)
+      # traefik.ingress.kubernetes.io/service.scheme: http # Usually not needed if port is 80/8080
+    host: airflow.${var.domain} # Define the hostname
+    path: / # Root path
 
 dags:
   persistence:
