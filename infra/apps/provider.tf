@@ -18,6 +18,7 @@ terraform {
       version = "2.38.0"
     }
   }
+  required_version = "1.11.4"
 }
 
 provider "kubernetes" {

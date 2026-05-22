@@ -1,0 +1,74 @@
+resource "helm_release" "airflow" {
+  chart      = "airflow"
+  repository = "https://airflow.apache.org"
+  version    = "v1.16.0"
+  name       = "airflow"
+  namespace  = "services"
+  values = [
+    <<EOF
+executor: KubernetesExecutor
+
+# Configuration specific to KubernetesExecutor
+# kubernetes:
+#   # Namespace where worker pods will run (defaults to Airflow's namespace)
+#   namespace: airflow-workers
+
+# Disable LoadBalancer service for webserver (we'll use Ingress)
+webserver:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+  service:
+    type: ClusterIP
+  livenessProbe:
+    timeoutSeconds: 60
+    initialDelaySeconds: 60
+  startupProbe:
+    timeoutSeconds: 120
+    periodSeconds: 20
+    failureThreshold: 6
+workers:
+  persistence:
+    size: 2Gi
+
+# Use the official chart's Ingress settings for the webserver
+ingress:
+  web:
+    enabled: true
+    # Use Traefik Ingress controller
+    ingressClassName: traefik # Use this if you have a default IngressClass
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
+      # Backend service uses HTTP (Airflow webserver default)
+      # traefik.ingress.kubernetes.io/service.scheme: http # Usually not needed if port is 80/8080
+    host: airflow.${var.domain} # Define the hostname
+    path: / # Root path
+
+dags:
+  persistence:
+    enabled: false  # Git sync and PVCs are mutually exclusive for DAGs
+
+  gitSync:
+    enabled: true
+    repo: "https://github.com/gergelysotidm/eu-data-platform.git"  # Replace with your repo
+    branch: "upcloud-demo"  # Or whatever branch you want
+    subPath: "dags"  # Path within the repo where DAGs are stored
+    depth: 1
+    rev: HEAD
+    wait: 60  # Sync interval in seconds
+
+
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+EOF
+  ]
+  timeout = 900
+}

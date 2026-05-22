@@ -2,14 +2,14 @@ terraform {
   required_providers {
     upcloud = {
       source  = "upcloudltd/upcloud"
-      version = "5.25.0"
+      version = "5.38.0"
     }
     random = {
       source  = "hashicorp/random"
       version = "3.6.3"
     }
   }
-  required_version = "1.10.5"
+  required_version = "1.11.4"
 }
 
 provider "upcloud" {

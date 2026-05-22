@@ -5,7 +5,7 @@ variable "k8s_network_range" {
 }
 
 variable "k8s_version" {
-  default     = "1.32"
+  default     = "1.35"
   description = "The kubernetes version to use."
   type        = string
 }

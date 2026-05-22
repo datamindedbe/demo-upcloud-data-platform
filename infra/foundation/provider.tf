@@ -2,7 +2,7 @@ terraform {
   required_providers {
     upcloud = {
       source  = "UpCloudLtd/upcloud"
-      version = "5.25.0"
+      version = "5.38.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
