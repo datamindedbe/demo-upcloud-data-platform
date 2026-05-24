@@ -1,7 +1,7 @@
 resource "helm_release" "airflow" {
   chart      = "airflow"
   repository = "https://airflow.apache.org"
-  version    = "v1.16.0"
+  version    = "v1.21.0"
   name       = "airflow"
   namespace  = "services"
   values = [

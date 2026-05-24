@@ -1,7 +1,7 @@
 resource "helm_release" "trino" {
   repository = "https://trinodb.github.io/charts/"
   chart      = "trino"
-  version    = "1.39.0"
+  version    = "1.42.2"
   name       = "trino"
   namespace  = "services"
   values = [

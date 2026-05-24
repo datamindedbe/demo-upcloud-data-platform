@@ -12,7 +12,7 @@ useHttps: false
 
 image:
   repository: nilli9990/demo-upcloud-opa
-  tag: "latest"
+  tag: "1.16.0"
   pullPolicy: Always
 
 extraArgs:

@@ -91,13 +91,13 @@ resource "kubernetes_secret" "lakekeeper_db" {
     namespace = "services"
   }
   data = {
-    ICEBERG_REST__PG_HOST_R       = upcloud_managed_database_postgresql.db.service_host
-    ICEBERG_REST__PG_HOST_W       = upcloud_managed_database_postgresql.db.service_host
-    ICEBERG_REST__PG_PORT         = upcloud_managed_database_postgresql.db.service_port
-    ICEBERG_REST__PG_PASSWORD     = upcloud_managed_database_postgresql.db.service_password
-    ICEBERG_REST__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db.name
-    ICEBERG_REST__PG_USER         = upcloud_managed_database_postgresql.db.service_username
-    ICEBERG_REST__SECRETS_BACKEND = "Postgres"
+    LAKEKEEPER__PG_HOST_R       = upcloud_managed_database_postgresql.db.service_host
+    LAKEKEEPER__PG_HOST_W       = upcloud_managed_database_postgresql.db.service_host
+    LAKEKEEPER__PG_PORT         = upcloud_managed_database_postgresql.db.service_port
+    LAKEKEEPER__PG_PASSWORD     = upcloud_managed_database_postgresql.db.service_password
+    LAKEKEEPER__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db.name
+    LAKEKEEPER__PG_USER         = upcloud_managed_database_postgresql.db.service_username
+    LAKEKEEPER__SECRETS_BACKEND = "Postgres"
     LAKEKEEPER__AUTHZ_BACKEND     = "allowall"
   }
   depends_on = [kubernetes_namespace.services]

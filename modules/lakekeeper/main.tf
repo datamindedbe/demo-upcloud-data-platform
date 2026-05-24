@@ -1,15 +1,13 @@
 resource "helm_release" "lakekeeper" {
   repository = "https://lakekeeper.github.io/lakekeeper-charts"
   chart      = "lakekeeper"
-  version    = "0.6.0"
+  version    = "0.10.1"
   name       = "lakekeeper"
   namespace  = "services"
   wait       = false
   values = [
     <<EOF
 catalog:
-  image:
-    tag: v0.9.5
   extraEnvFrom:
     - secretRef:
         name: lakekeeper-custom-secrets #overwrite the external database credentials with our own settings
