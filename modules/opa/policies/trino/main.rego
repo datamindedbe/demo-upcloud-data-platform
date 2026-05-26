@@ -6,7 +6,7 @@ import future.keywords.in
 
 import data.trino
 
-default allow = true # Change this to false to enforce permissions
+default allow = false # Change this to false to enforce permissions
 
 allow if {
 	trino.allow_default_access

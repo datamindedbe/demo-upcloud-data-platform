@@ -11,6 +11,12 @@ catalog:
   extraEnvFrom:
     - secretRef:
         name: lakekeeper-custom-secrets #overwrite the external database credentials with our own settings
+  extraEnv:
+    - name: LAKEKEEPER__UI__OPENID_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: lakekeeper-ui-oidc
+          key: CLIENT_ID
   ingress:
     enabled: true
     host: lakekeeper.${var.domain}
@@ -20,6 +26,9 @@ catalog:
       traefik.ingress.kubernetes.io/router.tls: "true"
 postgresql:
   enabled: false
+authz:
+  backend: openfga
+internalOpenFGA: true
 
 externalDatabase:
   type: postgresql

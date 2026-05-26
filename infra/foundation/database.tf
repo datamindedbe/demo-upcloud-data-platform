@@ -85,6 +85,11 @@ resource "upcloud_managed_database_logical_database" "lakekeeper_db" {
   name    = "lakekeeper"
 }
 
+resource "upcloud_managed_database_logical_database" "lakekeeper_db_authz" {
+  service = upcloud_managed_database_postgresql.db.id
+  name    = "lakekeeper_authz"
+}
+
 resource "kubernetes_secret" "lakekeeper_db" {
   metadata {
     name      = "lakekeeper-custom-secrets"
@@ -95,10 +100,15 @@ resource "kubernetes_secret" "lakekeeper_db" {
     LAKEKEEPER__PG_HOST_W       = upcloud_managed_database_postgresql.db.service_host
     LAKEKEEPER__PG_PORT         = upcloud_managed_database_postgresql.db.service_port
     LAKEKEEPER__PG_PASSWORD     = upcloud_managed_database_postgresql.db.service_password
-    LAKEKEEPER__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db.name
+    LAKEKEEPER__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db_authz.name
     LAKEKEEPER__PG_USER         = upcloud_managed_database_postgresql.db.service_username
     LAKEKEEPER__SECRETS_BACKEND = "Postgres"
-    LAKEKEEPER__AUTHZ_BACKEND   = "allowall"
+    LAKEKEEPER__AUTHZ_BACKEND   = "openfga"
+    LAKEKEEPER__OPENFGA__ENDPOINT="http://lakekeeper-openfga.services.svc.cluster.local:8081"
+    LAKEKEEPER__UI__OPENID_PROVIDER_URI="https://zitadel.${var.hosted_domain}"
+    LAKEKEEPER__OPENID_PROVIDER_URI="https://zitadel.${var.hosted_domain}"
+    LAKEKEEPER__USE_X_FORWARDED_HEADERS=true
+    LAKEKEEPER__UI__OPENID_TOKEN_TYPE="id_token" #lakekeeper does not support opaque access tokens
   }
   depends_on = [kubernetes_namespace.services]
 }
