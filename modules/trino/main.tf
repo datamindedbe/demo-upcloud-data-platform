@@ -17,6 +17,9 @@ envFrom:
   - secretRef:
       name: trino-oidc
     prefix: OAUTH2_
+  - secretRef:
+      name: trino-lakekeeper-credentials
+    prefix: TRINO_LAKEKEEPER_OAUTH2_
 server:
   config:
     authenticationType: OAUTH2
@@ -25,14 +28,17 @@ catalogs:
     connector.name=iceberg
     iceberg.catalog.type=rest
     iceberg.rest-catalog.uri=http://lakekeeper.services.svc.cluster.local:8181/catalog
+    iceberg.rest-catalog.oauth2.server-uri=https://zitadel.${var.domain}/oauth/v2/token
+    iceberg.rest-catalog.oauth2.credential={ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_ID}:{ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_SECRET}
+    iceberg.rest-catalog.security=OAUTH2
+    iceberg.rest-catalog.oauth2.scope=openid
+    iceberg.rest-catalog.vended-credentials-enabled=true
     iceberg.rest-catalog.warehouse=iceberg
     fs.native-s3.enabled=true
     s3.endpoint=$${ENV:S3_ENDPOINT}
     s3.region=$${ENV:S3_REGION}
     s3.aws-access-key=$${ENV:S3_ACCESS_KEY_ID}
     s3.aws-secret-key=$${ENV:S3_SECRET_ACCESS_KEY}
-    iceberg.rest-catalog.security=NONE
-    iceberg.rest-catalog.vended-credentials-enabled=true
 
 coordinator:
   additionalConfigFiles:

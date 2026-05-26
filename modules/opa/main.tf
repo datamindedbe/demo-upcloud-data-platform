@@ -22,7 +22,23 @@ extraEnv:
   - name: TRINO_LAKEKEEPER_CATALOG_NAME
     value: "iceberg"
   - name: LAKEKEEPER_LAKEKEEPER_WAREHOUSE
-    value: "iceberg"
+    value: "demo"
+  - name: LAKEKEEPER_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: opa-lakekeeper-credentials
+        key: CLIENT_ID
+  - name: LAKEKEEPER_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: opa-lakekeeper-credentials
+        key: CLIENT_ID
+  - name: LAKEKEEPER_URL
+    value: "http://lakekeeper.services.svc.cluster.local:8181"
+  - name: LAKEKEEPER_SCOPE
+    value: "openid"
+  - name: LAKEKEEPER_TOKEN_ENDPOINT
+    value: "https://zitadel.${var.domain}/oauth/v2/token"
 
 authz:
   enabled: false
