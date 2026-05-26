@@ -11,3 +11,8 @@ module "trino" {
 module "opa" {
   source = "../../modules/opa"
 }
+
+module "airflow" {
+  source = "../../modules/airflow"
+  domain = var.hosted_domain
+}

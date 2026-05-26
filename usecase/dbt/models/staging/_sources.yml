@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Raw tables ingested into Lakekeeper by ingest.py
+    database: iceberg
+    schema: demo
+    tables:
+      - name: patients
+        identifier: raw_patients
+        description: Patient demographics
+        columns:
+          - name: Id
+          - name: BIRTHDATE
+          - name: DEATHDATE
+          - name: GENDER
+          - name: RACE
+          - name: ETHNICITY
+
+      - name: encounters
+        identifier: raw_encounters
+        description: Healthcare encounters / visits
+        columns:
+          - name: Id
+          - name: START
+          - name: STOP
+          - name: PATIENT
+          - name: ENCOUNTERCLASS
+          - name: DESCRIPTION
+          - name: BASE_ENCOUNTER_COST
+          - name: TOTAL_CLAIM_COST
+
+      - name: conditions
+        identifier: raw_conditions
+        description: Patient conditions and diagnoses
+        columns:
+          - name: START
+          - name: STOP
+          - name: PATIENT
+          - name: ENCOUNTER
+          - name: CODE
+          - name: DESCRIPTION
+
+      - name: medications
+        identifier: raw_medications
+        description: Patient medication records
+        columns:
+          - name: START
+          - name: STOP
+          - name: PATIENT
+          - name: ENCOUNTER
+          - name: CODE
+          - name: DESCRIPTION
+          - name: BASE_COST
+          - name: TOTALCOST

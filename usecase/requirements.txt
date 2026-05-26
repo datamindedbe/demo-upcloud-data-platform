@@ -1,0 +1,2 @@
+pyiceberg[s3fs]~=0.8
+pyarrow>=17.0

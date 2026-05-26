@@ -39,3 +39,7 @@ terraform.rc
 
 *.env
 *token.json
+
+venv/
+target/
+logs/

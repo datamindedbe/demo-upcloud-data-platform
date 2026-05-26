@@ -98,7 +98,7 @@ resource "kubernetes_secret" "lakekeeper_db" {
     LAKEKEEPER__PG_DATABASE     = upcloud_managed_database_logical_database.lakekeeper_db.name
     LAKEKEEPER__PG_USER         = upcloud_managed_database_postgresql.db.service_username
     LAKEKEEPER__SECRETS_BACKEND = "Postgres"
-    LAKEKEEPER__AUTHZ_BACKEND     = "allowall"
+    LAKEKEEPER__AUTHZ_BACKEND   = "allowall"
   }
   depends_on = [kubernetes_namespace.services]
 }

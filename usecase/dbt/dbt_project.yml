@@ -1,0 +1,21 @@
+name: 'healthcare'
+version: '1.0.0'
+config-version: 2
+
+profile: 'healthcare'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  healthcare:
+    staging:
+      +materialized: ephemeral
+    marts:
+      +materialized: table

@@ -1,0 +1,13 @@
+healthcare:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      method: none
+      host: "{{ env_var('TRINO_HOST', 'trino.upcloud.playground.dataminded.cloud') }}"
+      port: 443
+      http_scheme: https
+      database: iceberg
+      schema: demo
+      threads: 4
+      user: admin@dataminded.com
