@@ -45,8 +45,8 @@ coordinator:
       http-server.process-forwarded=true
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 250m
+      memory: 768Mi
 
 worker:
   additionalConfigFiles:
@@ -62,8 +62,8 @@ worker:
       http-server.authentication.oauth2.client-secret=$${ENV:OAUTH2_CLIENT_SECRET}
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 500m
+      memory: 1024Mi
 
 ingress:
   enabled: true
