@@ -9,5 +9,5 @@ healthcare:
       http_scheme: https
       database: iceberg
       schema: demo
-      threads: 4
+      threads: 1
       user: admin@dataminded.com
