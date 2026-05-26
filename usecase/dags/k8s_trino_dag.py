@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.utils.dates import days_ago
-from datetime import timedelta
+from datetime import timedelta, datetime
 from airflow.models import Variable
 
 default_args = {
@@ -19,8 +18,8 @@ with DAG(
         dag_display_name='🤖 K8s DBT Trino',
         default_args=default_args,
         description='Run a task in a Kubernetes pod using the KubernetesPodOperator',
-        schedule_interval=None,
-        start_date=days_ago(1),
+        schedule=None,
+        start_date=datetime(2026,5,24),
         catchup=False,
         tags=['example', 'kubernetes'],
 ) as dag:
