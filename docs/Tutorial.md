@@ -141,6 +141,7 @@ tofu output s3_warehouse_info
 
 Now go to the Lakekeeper UI at `https://lakekeeper.<your-domain>/ui` and login. 
 From there click on `Warehouses` in the left menu and then click on `Create Warehouse`.
+The code is setup that it assumes a warehouse named `iceberg`.
 Fill in the form using the information retrieved from the previous command.
 
 ### Running your first SQL queries
