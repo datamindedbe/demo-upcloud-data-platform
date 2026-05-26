@@ -49,9 +49,9 @@ dags:
 
   gitSync:
     enabled: true
-    repo: "https://github.com/nclaeys/upcloud-webinar.git"  # Replace with your repo
-    branch: "main"  # Or whatever branch you want
-    subPath: "dags"  # Path within the repo where DAGs are stored
+    repo: "https://github.com/datamindedbe/demo-upcloud-data-platform.git"  # Replace with your repo
+    branch: "demo"  # Or whatever branch you want
+    subPath: "usecase/dags"  # Path within the repo where DAGs are stored
     depth: 1
     rev: HEAD
     wait: 60  # Sync interval in seconds
