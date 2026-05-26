@@ -50,3 +50,20 @@ It uses Lakekeeper as Rest catalog to manage the metadata.
 ### Transform step
 
 Use trino to query and transform the Iceberg tables.
+
+#### Dags folder
+
+Airflow is configured to run the dags in the dags folder.
+
+#### Creating the docker image
+
+Run the following command in the usecase folder:
+```
+docker build -t nilli9990/dbt-upcloud-webinar:latest .
+docker push nilli9990/dbt-upcloud-webinar:latest
+```
+
+#### Trigger the job in Airflow
+
+Go to the Airflow UI and trigger the transformation job.
+The Airflow UI is available at `airflow.<domain>`
