@@ -14,7 +14,7 @@ executor: KubernetesExecutor
 #   namespace: airflow-workers
 
 # Disable LoadBalancer service for webserver (we'll use Ingress)
-webserver:
+apiServer:
   resources:
     requests:
       cpu: 500m
@@ -22,30 +22,26 @@ webserver:
   service:
     type: ClusterIP
   livenessProbe:
-    timeoutSeconds: 60
+    timeoutSeconds: 10
     initialDelaySeconds: 60
   startupProbe:
-    timeoutSeconds: 120
+    timeoutSeconds: 10
     periodSeconds: 20
     failureThreshold: 6
-workers:
-  persistence:
-    size: 2Gi
-
+statsd:
+  enabled: false
 # Use the official chart's Ingress settings for the webserver
 ingress:
-  web:
+  apiServer:
     enabled: true
-    # Use Traefik Ingress controller
-    ingressClassName: traefik # Use this if you have a default IngressClass
+    path: /
+    hosts:
+      - name: airflow.${var.domain}
+    ingressClassName: traefik
     annotations:
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
-      # Backend service uses HTTP (Airflow webserver default)
-      # traefik.ingress.kubernetes.io/service.scheme: http # Usually not needed if port is 80/8080
-    host: airflow.${var.domain} # Define the hostname
-    path: / # Root path
 
 dags:
   persistence:
@@ -53,22 +49,33 @@ dags:
 
   gitSync:
     enabled: true
-    repo: "https://github.com/gergelysotidm/eu-data-platform.git"  # Replace with your repo
-    branch: "upcloud-demo"  # Or whatever branch you want
+    repo: "https://github.com/nclaeys/upcloud-webinar.git"  # Replace with your repo
+    branch: "main"  # Or whatever branch you want
     subPath: "dags"  # Path within the repo where DAGs are stored
     depth: 1
     rev: HEAD
     wait: 60  # Sync interval in seconds
 
+triggerer:
+  enabled: false
+  replicas: 0
 
-createUserJob:
+redis:
+  enabled: false
+reateUserJob:
   useHelmHooks: false
   applyCustomEnv: false
 migrateDatabaseJob:
   useHelmHooks: false
   applyCustomEnv: false
-
+logs:
+  emptyDirConfig:
+    medium: "Memory"
+    sizeLimit: "1Gi"
+  persistence:
+    enabled: false
 EOF
   ]
-  timeout = 900
+  timeout = 300
+  wait    = false
 }
