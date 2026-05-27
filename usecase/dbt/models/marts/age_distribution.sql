@@ -6,7 +6,7 @@ select
         when date_diff('year', date(BIRTHDATE), current_date) < 65 then '50-64'
         else '65+'
     end                 as age_group,
-    count(*)            as patient_count
+    count(1)            as patient_count
 from {{ ref('stg_patients') }}
 group by 1
 order by 1

@@ -31,6 +31,10 @@ allow_default_access if {
     allow_filter_catalogs_for_system_catalog
 }
 
+allow_default_access if {
+    allow_sfc_on_system_metadata
+}
+
 # Every authenticated user can execute queries.
 # Authentication is checked by trino.
 allow_execute_query if {
@@ -75,4 +79,11 @@ allow_sfc_on_table_columns_in_system_catalog if {
 allow_filter_catalogs_for_system_catalog if {
     input.action.operation == "FilterCatalogs"
     input.action.resource.catalog.name == "system"
+}
+
+# dbt-trino queries system.metadata.materialized_views during table introspection
+allow_sfc_on_system_metadata if {
+    input.action.operation == "SelectFromColumns"
+    input.action.resource.table.catalogName == "system"
+    input.action.resource.table.schemaName == "metadata"
 }

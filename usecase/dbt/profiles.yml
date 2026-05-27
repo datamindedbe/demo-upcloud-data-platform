@@ -3,11 +3,12 @@ healthcare:
   outputs:
     dev:
       type: trino
-      method: none
+      method: jwt
       host: "{{ env_var('TRINO_HOST', 'trino.upcloud.playground.dataminded.cloud') }}"
       port: 443
       http_scheme: https
       database: iceberg
       schema: demo
       threads: 1
-      user: admin@dataminded.com
+      user: "374073189749817803" #Admin user
+      jwt_token: "{{ env_var('TRINO_JWT_TOKEN') }}"

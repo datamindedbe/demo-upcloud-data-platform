@@ -1,1 +1,1 @@
-select * from {{ source('raw', 'patients') }}
+select id, birthdate, deathdate, gender, race, ethnicity from {{ source('raw', 'patients') }}

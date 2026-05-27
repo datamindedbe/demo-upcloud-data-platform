@@ -57,6 +57,15 @@ def catalog():
             "s3.secret-access-key": os.environ["AWS_SECRET_ACCESS_KEY"],
             "s3.region": os.environ.get("AWS_DEFAULT_REGION", "europe-1"),
             "s3.path-style-access": "true",
+            "auth": {
+                "type": "oauth2",
+                "oauth2": {
+                    "client_id": "",
+                    "client_secret": "",
+                    "token_url": "https://zitadel.upcloud.playground.dataminded.cloud/oauth/v2/token",
+                    "scope": "openid"
+                }
+            }
         },
     )
 
