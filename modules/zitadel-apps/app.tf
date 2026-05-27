@@ -12,6 +12,18 @@ resource "zitadel_project" "lakekeeper" {
   org_id = data.zitadel_org.default.id
 }
 
+resource "zitadel_human_user" "researcher" {
+  org_id        = data.zitadel_org.default.id
+  user_name     = "researcher"
+  display_name          = "researcher"
+  email         = "research@dataminded.com"
+  first_name    = "researcher"
+  last_name     = "dataminded"
+  initial_password = "Researcher123!"
+  is_email_verified = true
+  initial_skip_password_change = true
+}
+
 resource "zitadel_application_oidc" "trino" {
   project_id = zitadel_project.trino.id
   org_id     = data.zitadel_org.default.id
