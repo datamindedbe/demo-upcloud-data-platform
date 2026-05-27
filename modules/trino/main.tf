@@ -29,7 +29,7 @@ catalogs:
     iceberg.catalog.type=rest
     iceberg.rest-catalog.uri=http://lakekeeper.services.svc.cluster.local:8181/catalog
     iceberg.rest-catalog.oauth2.server-uri=https://zitadel.${var.domain}/oauth/v2/token
-    iceberg.rest-catalog.oauth2.credential={ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_ID}:{ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_SECRET}
+    iceberg.rest-catalog.oauth2.credential=$${ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_ID}:$${ENV:TRINO_LAKEKEEPER_OAUTH2_CLIENT_SECRET}
     iceberg.rest-catalog.security=OAUTH2
     iceberg.rest-catalog.oauth2.scope=openid
     iceberg.rest-catalog.vended-credentials-enabled=true

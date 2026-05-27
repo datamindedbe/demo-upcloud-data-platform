@@ -6,6 +6,16 @@ For this demo setup we allow all actions, but in a production setup you should r
 In order to restrict the access, you need to do the following:
 
 - Enable authentication in Trino and Lakekeeper, this is done by setting up Zitadel as an OIDC provider.
+- If you need to register a machine user in Lakekeeper, use the following call:
+```
+curl -X POST https://lakekeeper.<domain>/management/v1/user \
+  -H "Authorization: Bearer <user-to-register-jwt-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "<name-of-machine-user>",
+    "subject": "oidc~<id-of-machine-user>"
+  }'
+```
 - Set default allow to false in the `modules/opa/policies/trino/main.rego` file.
 - Modify the `modules/opa/policies/lakekeeper/*.rego` files to use authentication and check permission in Lakekeeper.
 

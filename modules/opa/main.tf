@@ -22,7 +22,7 @@ extraEnv:
   - name: TRINO_LAKEKEEPER_CATALOG_NAME
     value: "iceberg"
   - name: LAKEKEEPER_LAKEKEEPER_WAREHOUSE
-    value: "demo"
+    value: "iceberg"
   - name: LAKEKEEPER_CLIENT_ID
     valueFrom:
       secretKeyRef:
@@ -32,7 +32,7 @@ extraEnv:
     valueFrom:
       secretKeyRef:
         name: opa-lakekeeper-credentials
-        key: CLIENT_ID
+        key: CLIENT_SECRET
   - name: LAKEKEEPER_URL
     value: "http://lakekeeper.services.svc.cluster.local:8181"
   - name: LAKEKEEPER_SCOPE

@@ -17,7 +17,7 @@ require_warehouse_access(lakekeeper_id, warehouse_name, user, action) := true if
             "operation": {
                 "warehouse": {
                     "action": action,
-                    "warehouse-id": "12c97b28-60f6-11f0-ad32-cbecb50c932f"
+                    "warehouse-id": warehouse_id_for_name(lakekeeper_id, warehouse_name)
                 }
             },
             "identity": {
@@ -37,7 +37,7 @@ require_namespace_access(lakekeeper_id, warehouse_name, namespace_name, user, ac
             "operation": {
                 "namespace" : {
                     "action": action,
-                    "warehouse-id": "12c97b28-60f6-11f0-ad32-cbecb50c932f",
+                    "warehouse-id": warehouse_id_for_name(lakekeeper_id, warehouse_name),
                     "namespace": namespace_name
                 }
             },
@@ -58,7 +58,7 @@ require_table_access(lakekeeper_id, warehouse_name, namespace_name, table_name, 
             "operation": {
                 "table": {
                     "action": action,
-                    "warehouse-id": "12c97b28-60f6-11f0-ad32-cbecb50c932f",
+                    "warehouse-id": warehouse_id_for_name(lakekeeper_id, warehouse_name),
                     "namespace": namespace_name,
                     "table": table_name
                 }
@@ -80,7 +80,7 @@ require_view_access(lakekeeper_id, warehouse_name, namespace_name, view_name, us
             "operation": {
                 "view": {
                     "action": action,
-                    "warehouse-id": "12c97b28-60f6-11f0-ad32-cbecb50c932f",
+                    "warehouse-id": warehouse_id_for_name(lakekeeper_id, warehouse_name),
                     "namespace": namespace_name,
                     "table": view_name
                 }

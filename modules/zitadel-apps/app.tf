@@ -31,6 +31,7 @@ resource "zitadel_machine_user" "trino-opa" {
   name        = "trino-opa"
   description = "a machine user for opa to access Zitadel"
   with_secret = true
+  access_token_type = "ACCESS_TOKEN_TYPE_JWT"
 }
 
 resource "zitadel_application_oidc" "lakekeeper" {
@@ -44,6 +45,7 @@ resource "zitadel_application_oidc" "lakekeeper" {
   post_logout_redirect_uris = ["http://localhost"]
   dev_mode                  = true
   auth_method_type          = "OIDC_AUTH_METHOD_TYPE_BASIC"
+  access_token_type         = "OIDC_TOKEN_TYPE_JWT"
 }
 
 resource "zitadel_application_oidc" "lakekeeper_ui" {
@@ -58,4 +60,5 @@ resource "zitadel_application_oidc" "lakekeeper_ui" {
   grant_types               = ["OIDC_GRANT_TYPE_DEVICE_CODE", "OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
   post_logout_redirect_uris = ["http://localhost"]
   dev_mode                  = true
+  access_token_type         = "OIDC_TOKEN_TYPE_JWT"
 }

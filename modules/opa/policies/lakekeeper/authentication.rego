@@ -7,6 +7,9 @@ import data.lakekeeper
 # Token is warehouse specific.
 access_token[lakekeeper_id] := access_token if {
     this := lakekeeper.lakekeeper_by_id[lakekeeper_id]
+    raw_body := sprintf(
+            "grant_type=client_credentials&client_id=%v&client_secret=%v&scope=%v",
+            [this.client_id, this.client_secret, this.scope])
     value := http.send({
         "method": "POST",
         "headers": {"Content-type": "application/x-www-form-urlencoded"},
@@ -14,11 +17,9 @@ access_token[lakekeeper_id] := access_token if {
         "force_cache": true,
         "force_cache_duration_seconds": 150,
         "caching_mode": "deserialized",
-        "raw_body": sprintf(
-            "grant_type=client_credentials&client_id=%v&client_secret=%v&scope=%v",
-            [this.client_id, this.client_secret, this.scope])
-        })
-    access_token := value.body.id_token
+        "raw_body": raw_body
+    })
+    access_token := value.body.access_token
 }
 
 # Send an authenticated HTTP request to the lakekeeper service
@@ -34,5 +35,4 @@ authenticated_http_send(lakekeeper_id, method, path, body) := response if {
         },
         "body": body
     })
-    print(response)
 }
