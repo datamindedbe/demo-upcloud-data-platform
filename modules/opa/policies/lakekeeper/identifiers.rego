@@ -19,6 +19,8 @@ warehouse_id_for_name(lakekeeper_id, warehouse_name) := warehouse_id if {
         "force_cache_duration_seconds": 3600,
         "caching_mode": "deserialized",
     }).body
+    print("warehouses from lakekeeper")
+    print(body)
     lakekeeper_warehouse := body.warehouses[_]
     warehouse_name == lakekeeper_warehouse.name
     warehouse_id := lakekeeper_warehouse.id
