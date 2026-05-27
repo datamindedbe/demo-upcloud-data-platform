@@ -16,6 +16,6 @@ clean-targets:
 models:
   healthcare:
     staging:
-      +materialized: ephemeral
+      +materialized: table
     marts:
       +materialized: table
