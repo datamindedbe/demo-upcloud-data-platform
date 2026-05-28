@@ -12,7 +12,6 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 
-# Define DAG
 with DAG(
         dag_id='k8s_dbt_trino',
         dag_display_name='🤖 K8s DBT Trino',
@@ -24,11 +23,9 @@ with DAG(
         tags=['example', 'kubernetes'],
 ) as dag:
 
-    # Define task using KubernetesPodOperator
     run_in_k8s = KubernetesPodOperator(
         namespace='services',  # or your airflow namespace
         image='nilli9990/dbt-upcloud-webinar',
-        # cmds=["sh", "-c"],
         labels={"app": "airflow"},
         name="run_dbt_trino_task",
         task_id="run_dbt_trino_task",
