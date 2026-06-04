@@ -1,0 +1,43 @@
+services:
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3
+      DEFAULT_REGION: us-east-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  benchmark:
+    build: .
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      S3_ENDPOINT_URL: http://localstack:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+
+  benchmark-sentinel:
+    build: .
+    # No localstack dependency — authenticates via the host-side sentinel stack.
+    # Reaches host services via host.docker.internal (Docker Desktop on Mac/Windows).
+    # On Linux add: extra_hosts: ["host.docker.internal:host-gateway"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      S3_ENDPOINT_URL: http://host.docker.internal:8080
+      S3_BUCKET: local-benchmark-local-sentinel
+      AWS_DEFAULT_REGION: us-east-1
+      KEYCLOAK_URL: http://host.docker.internal:8180/realms/s3sentinel/protocol/openid-connect/token
+      STS_ENDPOINT_URL: http://host.docker.internal:8090
+      OIDC_CLIENT_ID: s3sentinel
+      OIDC_USERNAME: admin
+      OIDC_PASSWORD: admin123
+      ROLE_ARN: arn:aws:iam::000000000000:role/s3sentinel

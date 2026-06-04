@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: s3-benchmark
+  namespace: default
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: s3-benchmark
+          image: ghcr.io/datamindedbe/demo-inno26q2-sentinel-opencloud-integration/s3-benchmark:latest
+          # Values below are templated by the Makefile (sed) at deploy time.
+          # Deploy via `make run_without` / `make run_with`, not raw kubectl apply.
+          args:
+            - "--big-file-size-mb=@@BIG_FILE_SIZE_MB@@"
+            - "--small-file-count=@@SMALL_FILE_COUNT@@"
+            - "--processes=@@PROCESSES@@"
+          env:
+            # S3 proxy endpoint (the reverse proxy, not real S3)
+            - name: S3_ENDPOINT_URL
+              value: "https://fsabm.upcloudobjects.com"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              value: AKIA1DFD3F8B0359A789
+            - name: AWS_SECRET_ACCESS_KEY
+              value: wp6gqLfUZm9h772hMIQs70IbggTrYeAo/AZrIwzg
+            - name: S3_BUCKET
+              value: "benchmark"
+          resources:
+            requests:
+              cpu: "1"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "1Gi"
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+
+# --- Setup commands ---
+#
+# OIDC credentials secret:
+#   kubectl create secret generic s3-benchmark-oidc \
+#     --from-literal=username=admin \
+#     --from-literal=password=admin123
+#
+# GHCR pull secret:
+#   kubectl create secret docker-registry ghcr-pull-secret \
+#     --docker-server=ghcr.io \
+#     --docker-username=WRRB \
+#     --docker-password=$(gh auth token)
+#
+# Standard AWS IAM auth (alternative — replace the STS block above with):
+#   kubectl create secret generic s3-benchmark-credentials \
+#     --from-literal=access-key-id=YOUR_KEY \
+#     --from-literal=secret-access-key=YOUR_SECRET
+#   env:
+#     - name: AWS_ACCESS_KEY_ID
+#       valueFrom: { secretKeyRef: { name: s3-benchmark-credentials, key: access-key-id } }
+#     - name: AWS_SECRET_ACCESS_KEY
+#       valueFrom: { secretKeyRef: { name: s3-benchmark-credentials, key: secret-access-key } }

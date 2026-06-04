@@ -39,3 +39,8 @@ terraform.rc
 
 *.env
 *token.json
+
+# Python bytecode
+__pycache__/
+
+*kubeconfig.yml
